@@ -1,0 +1,19 @@
+# Build output
+bin/
+obj/
+
+
+# Log files
+logs/
+*.log
+*.tlog
+
+# Environment variables
+.env
+secrets.json
+
+# Configuration
+appsettings.Development.json
+
+# Dependency caches
+packages/
