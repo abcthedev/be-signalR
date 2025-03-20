@@ -7,12 +7,23 @@ public class NotificationService
 {
     private readonly IMongoCollection<Notification> _notifications;
 
-    public NotificationService(IOptions<MongoDbSettings> settings)
+public NotificationService(IConfiguration configuration)
     {
-        var client = new MongoClient(settings.Value.ConnectionString);
-        var database = client.GetDatabase(settings.Value.DatabaseName);
-        _notifications = database.GetCollection<Notification>(settings.Value.CollectionName);
+var connectionString = configuration["MongoDB:ConnectionString"];
+    var databaseName = configuration["MongoDB:DatabaseName"];
+    var collectionName = configuration["MongoDB:CollectionName"];
+
+    if (string.IsNullOrEmpty(connectionString))
+    {
+        throw new Exception("MongoDB ConnectionString is NULL or EMPTY. Check your appsettings.json!");
     }
+
+    Console.WriteLine($"Using MongoDB Connection: {connectionString}");
+
+    var client = new MongoClient(connectionString);
+    var database = client.GetDatabase(databaseName);
+    _notifications = database.GetCollection<Notification>(collectionName);
+        }
 
     public async Task<List<Notification>> GetAllNotificationsAsync()
     {

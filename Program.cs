@@ -8,7 +8,12 @@ using API.Hubs;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.Configure<MongoDbSettings>(builder.Configuration.GetSection("MongoDB"));
-builder.Services.AddSingleton<NotificationService>();
+builder.Services.AddSingleton<NotificationService>(sp =>
+    new NotificationService(sp.GetRequiredService<IConfiguration>())
+);
+
+var config = builder.Configuration.GetSection("MongoDB");
+Console.WriteLine($"MongoDB Config: {config.GetValue<string>("ConnectionString")}");
 
 builder.Services.AddCors(options =>
 {
@@ -22,6 +27,9 @@ builder.Services.AddCors(options =>
         });
 });
 
+builder.Logging.ClearProviders();
+builder.Logging.AddConsole();
+builder.Logging.AddDebug();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -31,7 +39,7 @@ var app = builder.Build();
 
 app.UseCors("AllowCors");
 
-if (app.Environment.IsDevelopment())
+if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
 {
     app.UseSwagger();
     app.UseSwaggerUI();

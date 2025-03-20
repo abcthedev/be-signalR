@@ -4,8 +4,8 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using API.Hubs;
 
-[ApiController]
 [Route("api/[controller]")]
+[ApiController]
 public class NotificationsController : ControllerBase
 {
     private readonly IHubContext<NotificationHub> _hubContext;
